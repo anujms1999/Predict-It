@@ -3,8 +3,6 @@ var API_KEY='xDJgvTXNa6Z4GjT5iSRr6Zbs4vH2';
 var match_ids=[];
 var types=[
   'T20I',
-  'WomensT20I',
-  'WomensODI',
   'ODI',
 ];
 
@@ -71,7 +69,7 @@ function checktype(val)
 function current(val)
 {
   var d = new Date();
-  return val['date'].toString().slice(0,10) == d.toISOString().slice(0,10);
+  return val['date'].toString().slice(0,11) === d.toISOString().slice(0,11);
 }
 
 function getdata()
@@ -101,7 +99,7 @@ function getdata()
 		});
 }
 
-function get_match_status(matchId)
+function get_match_status(matchId,squad1,squad2)
 {
   $.ajax({
     url:"https://cricapi.com/api/cricketScore",
@@ -114,7 +112,7 @@ function get_match_status(matchId)
       {
         $('#score').children().remove();
         $('#score').append('<h5 style="color:green">' + response['description'] + '</h5>');
-        get_match_details(matchId);
+        get_match_details(matchId,squad1,squad2);
       }
       else{
         $('#score').children().remove();
@@ -153,5 +151,53 @@ function get_match_details(matchId,squad1,squad2)
       } ,
     });
 
-    //getStats(squad1,squad2);
+    prediction(squad1,squad2);
+}
+
+function prediction(squad1,squad2)
+{
+  var team1Score=0,team2Score=0;
+  squad1.forEach(function(player){
+    $.ajax({
+      url:"http://cricapi.com/api/playerStats",
+      data:{
+      apikey:API_KEY,
+      pid:player[1],
+      },
+      success:function(response){
+        console.log(response['data']['batting']['T20Is']['100']);
+        var centuries = Number(response['data']['batting']['T20Is']['100']) + Number(response['data']['batting']['ODIs']['100']) ;
+        var fifties = Number(response['data']['batting']['T20Is']['50']) + Number(response['data']['batting']['ODIs']['50']);
+        var bat_avg = (Number(response['data']['batting']['T20Is']['Ave']) + Number(response['data']['batting']['ODIs']['Ave']))/2;
+        var strike_rate = (Number(response['data']['batting']['T20Is']['SR']) + Number(response['data']['batting']['ODIs']['SR']))/2;
+        var wi5 = Number(response['data']['bowling']['T20Is']['5w']) + Number(response['data']['bowling']['ODIs']['5w']);
+        var econ = (Number(response['data']['batting']['T20Is']['Econ']) + Number(response['data']['batting']['ODIs']['Econ']))/2;
+        var bowl_avg = (response['data']['bowling']['T20Is']['Ave'] + response['data']['bowling']['ODIs']['Ave'])/2;
+        var tot_wicket = Number(response['data']['bowling']['T20Is']['Wkts']) + Number(response['data']['bowling']['ODIs']['Wkts']);
+        var tot_runs = Number(response['data']['batting']['T20Is']['Runs']) + Number(response['data']['batting']['ODIs']['Runs']);
+      },
+    });
+  });
+
+  squad2.forEach(function(player){
+    $.ajax({
+      url:"http://cricapi.com/api/playerStats",
+      data:{
+      apikey:API_KEY,
+      pid:player[1],
+      },
+      success:function(response){
+        var centuries = Number(response['data']['batting']['T20Is']['100']) + Number(response['data']['batting']['ODIs']['100']) ;
+        var fifties = Number(response['data']['batting']['T20Is']['50']) + Number(response['data']['batting']['ODIs']['50']);
+        var bat_avg = (Number(response['data']['batting']['T20Is']['Ave']) + Number(response['data']['batting']['ODIs']['Ave']))/2;
+        var strike_rate = (Number(response['data']['batting']['T20Is']['SR']) + Number(response['data']['batting']['ODIs']['SR']))/2;
+        var wi5 = Number(response['data']['bowling']['T20Is']['5w']) + Number(response['data']['bowling']['ODIs']['5w']);
+        var econ = (Number(response['data']['batting']['T20Is']['Econ']) + Number(response['data']['batting']['ODIs']['Econ']))/2;
+        var bowl_avg = (response['data']['bowling']['T20Is']['Ave'] + response['data']['bowling']['ODIs']['Ave'])/2;
+        var tot_wicket = Number(response['data']['bowling']['T20Is']['Wkts']) + Number(response['data']['bowling']['ODIs']['Wkts']);
+        var tot_runs = Number(response['data']['batting']['T20Is']['Runs']) + Number(response['data']['batting']['ODIs']['Runs']);
+      },
+    });
+  });
+
 }
