@@ -132,7 +132,7 @@ function get_match_details(matchId,squad1,squad2)
       },
       success:function(response){
           response['data']['batting'].forEach(function(val){
-            $('#score').append('<hr> <h6>' + val['title'] + '</h6>');
+            $('#score').append('<hr> <h6>' + val['title'] + '(Batting)' + '</h6>');
             val['scores'].forEach(function(newval){
               $('#score').append('<li>' + newval['batsman'] + ' - ' + '<b>Status: </b> ' + newval['dismissal-info'] + '  ');
               $('#score').append('<b>Runs: </b>' + newval['R'] + `(${newval['B']})` + '</li><br>');
