@@ -10,6 +10,7 @@ var types=[
 
 $(document).ready(function() {
   getdata();
+  setInterval(getdata,300*1000);
 });
 
 function showModal(element)
