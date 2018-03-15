@@ -23,7 +23,7 @@ function showModal(element)
   $('#squad2list').children().remove();
 
   $.ajax({
-    url: "http://cricapi.com/api/fantasySquad",
+    url: "https://cricapi.com/api/fantasySquad",
     data: {
       apikey:API_KEY,
       unique_id:uniqueid,
@@ -77,7 +77,7 @@ function getdata()
     var matchShow = [];
     match_ids=[];
 		$.ajax({
-			url: "http://cricapi.com/api/matches",
+			url: "https://cricapi.com/api/matches",
 			data: {
 				apikey:API_KEY,
 			},
@@ -101,7 +101,7 @@ function getdata()
 function get_match_status(matchId)
 {
   $.ajax({
-    url:"http://cricapi.com/api/cricketScore",
+    url:"https://cricapi.com/api/cricketScore",
     data:{
       apikey:API_KEY,
       unique_id:matchId,
