@@ -1,3 +1,4 @@
+
 var API_KEY='xDJgvTXNa6Z4GjT5iSRr6Zbs4vH2';
 var match_ids=[];
 var types=[
@@ -5,8 +6,6 @@ var types=[
   'WomensT20I',
   'WomensODI',
   'ODI',
-  'Test',
-  'WomensTest'
 ];
 
 $(document).ready(function() {
@@ -16,6 +15,8 @@ $(document).ready(function() {
 function showModal(element)
 {
   // $('.modal-title').html(element.innerHTML);
+  $('#score').children().remove();
+  $('#score').html("");
   var squad1=new Array(10);
   var squad2=new Array(10);
   var uniqueid=element.id;
@@ -58,7 +59,7 @@ function showModal(element)
     },
   });
   $('#myModal').modal('show');
-  //get_match_status(element.id,squad1,squad2);
+  get_match_status(element.id,squad1,squad2);
 }
 
 function checktype(val)
@@ -110,36 +111,45 @@ function get_match_status(matchId)
       if(response['matchStarted']==true)
       {
         $('#score').children().remove();
-        $('#score').append('<li style="color:green">' + response['description'] + '</li>');
+        $('#score').append('<h5 style="color:green">' + response['description'] + '</h5>');
         get_match_details(matchId);
       }
       else{
         $('#score').children().remove();
-        $('#score').append('<li style="color:red"> Match has not yet Started </li>');
+        $('#score').append('<h5 style="color:red"> Match has not yet Started </h5>');
       }
     },
   });
 }
 
-// function get_match_details(matchId,squad1,squad2)
-// {
-//     $.ajax({
-//       url:"http://cricapi.com/api/fantasySummary" ,
-//       data:{
-//         apikey:API_KEY,
-//         unique_id:matchId,
-//       },
-//       success:function(response){
-//
-//         if(response['type']=="test")
-//         {
-//
-//         }
-//         else
-//         {
-//           $('#score').append('<li>' + )
-//         }
-//
-//       } ,
-//     });
-// }
+function get_match_details(matchId,squad1,squad2)
+{
+    $.ajax({
+      url:"https://cricapi.com/api/fantasySummary" ,
+      data:{
+        apikey:API_KEY,
+        unique_id:matchId,
+      },
+      success:function(response){
+          response['data']['batting'].forEach(function(val){
+            $('#score').append('<hr> <h6>' + val['title'] + '</h6>');
+            val['scores'].forEach(function(newval){
+              $('#score').append('<li>' + newval['batsman'] + ' - ' + '<b>Status: </b> ' + newval['dismissal-info'] + '  ');
+              $('#score').append('<b>Runs: </b>' + newval['R'] + `(${newval['B']})` + '</li><br>');
+            });
+          });
+
+          response['data']['bowling'].forEach(function(val){
+            $('#score').append('<hr> <h6>' + val['title'] + '</h6>');
+            val['scores'].forEach(function(newval){
+              $('#score').append('<li>'+newval['bowler']+' - '+'<b>Overs: </b>'+newval['O']+' , '+'<b>Runs: </b>'+newval['R'] + '  ');
+              $('#score').append('<b>Maiden: </b>'+newval['M']+' ,<b>Wickets: </b>'+ newval['W']+' , <b>Economy: </b>'+newval['Econ']);
+              $('#score').append('</li><br>');
+            });
+          });
+
+      } ,
+    });
+
+    getStats(squad1,squad2);
+}
