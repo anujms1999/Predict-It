@@ -76,6 +76,7 @@ function current(val)
 
 function getdata()
 {
+    $('#match-list').children().remove();
     var matchShow = [];
     match_ids=[];
 		$.ajax({
