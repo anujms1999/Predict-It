@@ -151,5 +151,5 @@ function get_match_details(matchId,squad1,squad2)
       } ,
     });
 
-    getStats(squad1,squad2);
+    //getStats(squad1,squad2);
 }
